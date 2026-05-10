@@ -1,58 +1,70 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InalStore - Kasir Modern</title>
+    <title>InalStore - Pro Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div class="container">
-        <h2>🛒 InalStore</h2>
-        <div class="card input-card">
-            <h3>Input Data Barang</h3>
-            <input type="text" id="namaBarang" placeholder="Nama Bahan Makanan">
+    <div class="app-container">
+        <header class="main-header">
+            <div class="logo">🛒 <span>Inal</span>Store</div>
+            <div class="header-status">
+                <span class="badge">Cashier: Inal</span>
+                <span id="current-date" class="badge dark">10 Mei 2026</span>
+                <button class="btn-console" onclick="toggleConsole()">SYSTEM CHECK</button>
+            </div>
+        </header>
+
+        <main class="dashboard">
+            <section class="catalog-section">
+                <div class="section-header">
+                    <h2>Data Barang</h2>
+                    <button class="btn-primary" onclick="openModal()">+ Tambah Barang</button>
+                </div>
+                <div id="itemGrid" class="item-grid">
+                    </div>
+            </section>
+
+            <aside class="receipt-section">
+                <div class="receipt-paper">
+                    <h3>Struk Belanja</h3>
+                    <div id="strukContent" class="struk-items">
+                        <p class="empty-msg">Belum ada barang dipilih...</p>
+                    </div>
+                    <div class="receipt-footer">
+                        <div class="price-row"><span>Total</span> <h2 id="totalHarga">Rp 0</h2></div>
+                        <button class="btn-checkout" onclick="prosesPembayaran()">Proses Pembayaran</button>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <div id="inputModal" class="modal">
+        <div class="modal-content">
+            <h3>Tambah Barang Baru</h3>
+            <input type="text" id="namaBarang" placeholder="Nama Barang">
             <input type="number" id="hargaBarang" placeholder="Harga (Rp)">
             <input type="number" id="jumlahBarang" placeholder="Jumlah">
-
-            <label class="custom-file-upload">
-                <input type="file" id="fotoBarang" accept="image/*">
-                Pilih Foto Barang
-            </label>
-
-            <button onclick="prosesTambah()">Tambah ke Struk</button>
+            <input type="file" id="fotoBarang" accept="image/*" class="file-input">
+            <div class="modal-actions">
+                <button onclick="closeModal()" class="btn-secondary">Batal</button>
+                <button onclick="prosesTambah()" class="btn-primary">Simpan Barang</button>
+            </div>
         </div>
+    </div>
 
-        <div id="itemGrid" class="item-grid"></div>
+    <div id="systemConsole" class="console-modal">
+        <div class="console-box">
+            <h4>System Validation Console</h4>
+            <div id="testResults" class="test-list">
+                </div>
+            <button onclick="toggleConsole()" class="btn-dark">Close Console</button>
+        </div>
+    </div>
 
-        <button class="btn-print" onclick="cetakStruk()">Cetak Struk (PDF/Printer)</button>
-        <script src="script.js"></script>
-        <script>
-            const transaksi = new Transaksi();
-
-            function tambahKeKeranjang() {
-                const nama = document.getElementById('namaBarang').value;
-                const harga = parseFloat(document.getElementById('hargaBarang').value);
-                const jumlah = parseInt(document.getElementById('jumlahBarang').value);
-
-                if (nama && harga >= 0 && jumlah > 0) {
-                    const item = new Barang(nama, harga);
-                    transaksi.tambahBarang(item, jumlah);
-                    renderStruk();
-                }
-            }
-
-            function renderStruk() {
-                let strukText = "";
-                transaksi.daftarBelanja.forEach(item => {
-                    const subtotal = item.barang.harga * item.jumlah;
-                    strukText += `${item.barang.nama.padEnd(15)} x${item.jumlah} = Rp${subtotal}\n`;
-                });
-                document.getElementById('outputStruk').innerText = strukText;
-                document.getElementById('totalHarga').innerText = `Rp ${transaksi.hitungTotal()}`;
-            }
-        </script>
+    <script src="script.js"></script>
 </body>
-
 </html>
