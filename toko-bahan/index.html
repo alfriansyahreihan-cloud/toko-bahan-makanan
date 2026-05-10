@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InalStore - Kasir Modern</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>🛒 InalStore</h2>
+        <div class="card">
+            <input type="text" id="namaBarang" placeholder="Nama Bahan Makanan">
+            <input type="number" id="hargaBarang" placeholder="Harga (Rp)">
+            <input type="number" id="jumlahBarang" placeholder="Jumlah">
+            <button onclick="tambahKeKeranjang()">Tambah ke Struk</button>
+        </div>
+
+        <div class="receipt-area">
+            <h3>Struk Belanja</h3>
+            <pre id="outputStruk">Belum ada transaksi...</pre>
+            <div class="total-badge">
+                Total: <span id="totalHarga">Rp 0</span>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        const transaksi = new Transaksi();
+
+        function tambahKeKeranjang() {
+            const nama = document.getElementById('namaBarang').value;
+            const harga = parseFloat(document.getElementById('hargaBarang').value);
+            const jumlah = parseInt(document.getElementById('jumlahBarang').value);
+
+            if (nama && harga >= 0 && jumlah > 0) {
+                const item = new Barang(nama, harga);
+                transaksi.tambahBarang(item, jumlah);
+                renderStruk();
+            }
+        }
+
+        function renderStruk() {
+            let strukText = "";
+            transaksi.daftarBelanja.forEach(item => {
+                const subtotal = item.barang.harga * item.jumlah;
+                strukText += `${item.barang.nama.padEnd(15)} x${item.jumlah} = Rp${subtotal}\n`;
+            });
+            document.getElementById('outputStruk').innerText = strukText;
+            document.getElementById('totalHarga').innerText = `Rp ${transaksi.hitungTotal()}`;
+        }
+    </script>
+</body>
+</html>
