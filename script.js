@@ -22,6 +22,22 @@ class Transaksi {
 
 let trx = new Transaksi();
 
+/* --- TAMBAHAN: FUNGSI FORMAT RUPIAH --- */
+// Fungsi ini dipanggil via oninput di HTML
+function formatRupiah(input) {
+    let value = input.value.replace(/[^0-9]/g, "");
+    if (value) {
+        input.value = "Rp " + new Intl.NumberFormat('id-ID').format(value);
+    } else {
+        input.value = "";
+    }
+}
+
+// Fungsi untuk membersihkan format Rp dan titik menjadi angka murni
+function cleanNumber(string) {
+    return parseInt(string.replace(/[^0-9]/g, "")) || 0;
+}
+
 // UI Functions
 function openModal() {
     document.getElementById('inputModal').style.display = 'flex';
@@ -32,17 +48,32 @@ function closeModal() {
 }
 
 function toggleConsole() {
-    const console = document.getElementById('systemConsole');
-    if (console.style.display === 'flex') {
-        console.style.display = 'none';
-    } else {
-        console.style.display = 'flex';
-        // Tambahkan logika update isi console di sini jika perlu
+    const con = document.getElementById('systemConsole');
+    const res = document.getElementById('testResults');
+    
+    // Jalankan simulasi test
+    const unit1 = trx.hitungTotal() >= 0 ? "PASS" : "FAIL";
+    const unit2 = "PASS"; // Simulasi input
+    
+    if (res) {
+        res.innerHTML = `
+            <p>UNIT: PERHITUNGAN TOTAL .... <span class="test-pass">[${unit1}]</span></p>
+            <p>UNIT: INPUT BARANG ........ <span class="test-pass">[${unit2}]</span></p>
+            <p>INTEGRATION: WORKFLOW ...... <span class="test-pass">[PASS]</span></p>
+        `;
     }
+    
+    con.style.display = con.style.display === 'flex' ? 'none' : 'flex';
 }
+
+/* --- PERBAIKAN: PROSES TAMBAH --- */
 function prosesTambah() {
     const nama = document.getElementById('namaBarang').value;
-    const harga = parseFloat(document.getElementById('hargaBarang').value);
+    
+    // Perbaikan: Mengambil harga menggunakan cleanNumber agar tidak NaN
+    const hargaRaw = document.getElementById('hargaBarang').value;
+    const harga = cleanNumber(hargaRaw); 
+    
     const qty = parseInt(document.getElementById('jumlahBarang').value);
     const foto = document.getElementById('fotoBarang').files[0];
 
@@ -57,6 +88,12 @@ function prosesTambah() {
         else renderCard(nama, harga, qty, 'https://via.placeholder.com/150');
 
         updateStruk();
+        
+        // Bersihkan input setelah simpan
+        document.getElementById('namaBarang').value = "";
+        document.getElementById('hargaBarang').value = "";
+        document.getElementById('jumlahBarang').value = "";
+        
         closeModal();
     }
 }
@@ -84,24 +121,6 @@ function updateStruk() {
         </div>
     `).join('');
     document.getElementById('totalHarga').innerText = `Rp ${trx.hitungTotal().toLocaleString()}`;
-}
-
-// Simulasi System Validation Console
-function toggleConsole() {
-    const con = document.getElementById('systemConsole');
-    const res = document.getElementById('testResults');
-    
-    // Jalankan simulasi test
-    const unit1 = trx.hitungTotal() >= 0 ? "PASS" : "FAIL";
-    const unit2 = "PASS"; // Simulasi input
-    
-    res.innerHTML = `
-        <p>UNIT: PERHITUNGAN TOTAL .... <span class="test-pass">[${unit1}]</span></p>
-        <p>UNIT: INPUT BARANG ........ <span class="test-pass">[${unit2}]</span></p>
-        <p>INTEGRATION: WORKFLOW ...... <span class="test-pass">[PASS]</span></p>
-    `;
-    
-    con.style.display = con.style.display === 'flex' ? 'none' : 'flex';
 }
 
 if (typeof module !== 'undefined') {
