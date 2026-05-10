@@ -115,10 +115,10 @@ function updateStruk() {
     document.getElementById('totalHarga').innerText = `Rp ${trx.hitungTotal().toLocaleString()}`;
 }
 
-/* --- TAMBAHAN: FITUR PEMBAYARAN & CETAK STRUK --- */
+/* --- FITUR PEMBAYARAN & STRUK MODERN --- */
 function prosesPembayaran() {
     const total = trx.hitungTotal();
-    if (total <= 0) return alert("Keranjang masih kosong!");
+    if (total <= 0) return alert("Belum ada barang dipilih!");
 
     const bayarRaw = prompt(`Total Belanja: Rp ${total.toLocaleString()}\nMasukkan jumlah uang:`);
     if (bayarRaw === null) return;
@@ -126,37 +126,50 @@ function prosesPembayaran() {
     const bayar = cleanNumber(bayarRaw);
     if (bayar >= total) {
         const kembalian = bayar - total;
-        alert(`Kembalian Anda: Rp ${kembalian.toLocaleString()}`);
-        cetakStruk(bayar, kembalian);
+        // Langsung tampilkan preview struk ke user
+        tampilkanStrukPreview(bayar, kembalian);
     } else {
-        alert("Uang tidak cukup!");
+        alert("Maaf, uang tidak cukup!");
     }
 }
 
-function cetakStruk(bayar, kembali) {
-    const strukWindow = window.open('', '_blank', 'width=400,height=600');
+function tampilkanStrukPreview(bayar, kembali) {
     const items = trx.daftarBelanja.map(i => `
-        <tr>
-            <td>${i.barang.nama} x${i.jumlah}</td>
-            <td align="right">Rp ${(i.barang.harga * i.jumlah).toLocaleString()}</td>
-        </tr>`).join('');
+        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+            <span>${i.barang.nama} x${i.jumlah}</span>
+            <span>Rp ${(i.barang.harga * i.jumlah).toLocaleString()}</span>
+        </div>
+    `).join('');
 
-    strukWindow.document.write(`
-        <html>
-        <body style="font-family:monospace; padding:20px;">
-            <center><h2>INAL STORE</h2><p>Prabumulih</p></center>
-            <hr>
-            <table width="100%">${items}</table>
-            <hr>
-            <p>TOTAL: Rp ${trx.hitungTotal().toLocaleString()}</p>
-            <p>BAYAR: Rp ${bayar.toLocaleString()}</p>
-            <p>KEMBALI: Rp ${kembali.toLocaleString()}</p>
-            <center><p>Terima Kasih!</p></center>
-            <script>window.print();</script>
-        </body>
-        </html>
-    `);
-    strukWindow.document.close();
+    // Membuat element modal struk secara dinamis
+    const modalHtml = `
+        <div id="modalStruk" class="struk-modal" style="display:flex;">
+            <div class="struk-card">
+                <center>
+                    <h2 style="margin:0;">INAL STORE</h2>
+                    <p style="font-size:12px;">Prabumulih, Indonesia</p>
+                    <p>-------------------------</p>
+                </center>
+                ${items}
+                <p>-------------------------</p>
+                <div style="font-weight:bold;">
+                    <div style="display:flex; justify-content:space-between;"><span>TOTAL</span> <span>Rp ${trx.hitungTotal().toLocaleString()}</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span>BAYAR</span> <span>Rp ${bayar.toLocaleString()}</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span>KEMBALI</span> <span>Rp ${kembali.toLocaleString()}</span></div>
+                </div>
+                <p>-------------------------</p>
+                <center><p style="font-size:12px;">Terima Kasih Atas Kunjungan Anda!</p></center>
+                <button onclick="window.print()" class="btn-pembayaran" style="margin-top:10px;">CETAK STRUK</button>
+                <button onclick="tutupStruk()" style="width:100%; margin-top:5px; background:none; border:none; color:#888; cursor:pointer;">Tutup</button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function tutupStruk() {
+    const modal = document.getElementById('modalStruk');
+    if (modal) modal.remove();
 }
 
 if (typeof module !== 'undefined') {
