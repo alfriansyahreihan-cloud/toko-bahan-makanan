@@ -23,9 +23,23 @@ class Transaksi {
 let trx = new Transaksi();
 
 // UI Functions
-function openModal() { document.getElementById('inputModal').style.display = 'flex'; }
-function closeModal() { document.getElementById('inputModal').style.display = 'none'; }
+function openModal() {
+    document.getElementById('inputModal').style.display = 'flex';
+}
 
+function closeModal() {
+    document.getElementById('inputModal').style.display = 'none';
+}
+
+function toggleConsole() {
+    const console = document.getElementById('systemConsole');
+    if (console.style.display === 'flex') {
+        console.style.display = 'none';
+    } else {
+        console.style.display = 'flex';
+        // Tambahkan logika update isi console di sini jika perlu
+    }
+}
 function prosesTambah() {
     const nama = document.getElementById('namaBarang').value;
     const harga = parseFloat(document.getElementById('hargaBarang').value);

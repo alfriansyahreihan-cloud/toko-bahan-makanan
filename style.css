@@ -9,6 +9,7 @@
     --text-muted: #64748b;
     --white: #ffffff;
     --success: #10b981;
+    --overlay: rgba(15, 23, 42, 0.6);
 }
 
 body {
@@ -20,7 +21,7 @@ body {
     min-height: 100vh;
 }
 
-/* Header Styling */
+/* --- HEADER --- */
 .main-header {
     background: var(--glass-bg);
     backdrop-filter: blur(10px);
@@ -37,7 +38,6 @@ body {
 .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; }
 .logo span { color: var(--primary); }
 
-/* Badge & Buttons */
 .badge {
     background: rgba(99, 102, 241, 0.1);
     color: var(--primary);
@@ -61,7 +61,7 @@ body {
 
 .btn-console:hover { transform: scale(1.05); background: #000; }
 
-/* Dashboard Layout */
+/* --- LAYOUT --- */
 .dashboard {
     display: grid;
     grid-template-columns: 1fr 380px;
@@ -73,13 +73,12 @@ body {
     .dashboard { grid-template-columns: 1fr; }
 }
 
-/* Card Styling */
 .catalog-section, .receipt-section {
     background: var(--white);
     border-radius: 24px;
     padding: 2rem;
     border: 1px solid rgba(255,255,255,0.8);
-    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05), 0 10px 10px -5px rgba(0,0,0,0.02);
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05);
 }
 
 .section-header {
@@ -89,6 +88,7 @@ body {
     margin-bottom: 1.5rem;
 }
 
+/* --- BUTTONS --- */
 .btn-primary {
     background: var(--primary);
     color: white;
@@ -101,12 +101,9 @@ body {
     transition: 0.3s;
 }
 
-.btn-primary:hover {
-    background: var(--primary-hover);
-    transform: translateY(-2px);
-}
+.btn-primary:hover { transform: translateY(-2px); background: var(--primary-hover); }
 
-/* Receipt Paper Design */
+/* --- RECEIPT --- */
 .receipt-paper {
     background: #f8fafc;
     border: 2px dashed #e2e8f0;
@@ -118,14 +115,6 @@ body {
     min-height: 200px;
     border-bottom: 2px solid #e2e8f0;
     margin-bottom: 1rem;
-    padding-bottom: 1rem;
-}
-
-.total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--text-main);
 }
 
 .btn-checkout {
@@ -136,18 +125,52 @@ body {
     padding: 16px;
     border-radius: 14px;
     font-weight: 800;
-    font-size: 1rem;
-    margin-top: 1rem;
     cursor: pointer;
-    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
 }
 
-/* System Console Pop-up */
+/* --- FIX: MODAL & CONSOLE POSITIONING --- */
+/* Agar tidak menumpuk di bawah, kita buat overlay full screen */
+.modal, .console-modal {
+    display: none; /* Default sembunyi, muncul via JS */
+    position: fixed; 
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: var(--overlay);
+    backdrop-filter: blur(8px);
+    z-index: 1000; /* Pastikan paling atas */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Isi Modal (Putih) */
+.modal-content {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+}
+
+/* Box Console (Gelap) */
 .console-box {
     background: #0f172a;
     color: #38bdf8;
     padding: 2rem;
     border-radius: 20px;
-    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
     border: 1px solid #334155;
+    font-family: 'Courier New', monospace;
+}
+
+/* Memperbaiki input di dalam modal */
+.modal-content input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-sizing: border-box; /* Agar padding tidak merusak lebar */
 }
