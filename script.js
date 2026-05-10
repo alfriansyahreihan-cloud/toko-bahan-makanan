@@ -89,3 +89,7 @@ function toggleConsole() {
     
     con.style.display = con.style.display === 'flex' ? 'none' : 'flex';
 }
+
+if (typeof module !== 'undefined') {
+    module.exports = { Barang, Transaksi };
+}
